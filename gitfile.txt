@@ -1,4 +1,0 @@
-git text create！
-git text line2!
-new line edit the sencode time!!
-new line2 for history!
