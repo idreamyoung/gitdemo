@@ -1,0 +1,637 @@
+版本控制：项目迭代、团队协作需要要一种控制的机制，于是产生了版本控制工具。又分为SVN等集中式的版本控制工具与GIT的分布式的版本控制工具。
+
+GIT官网：https://git-scm.com
+
+GIT优势：
+有本地版本库可以不需要联网，数据完整性可保证，尽可能添加数据而不是删除或修改数据。
+分支操作非常快捷流畅，与LINUX命令全面兼容（因为与LINUX创始人开发）。
+
+GIT安装过程：
+除了在指定PATH环境时选择Use Git from Git Bash Olny项，其它都按默认步骤。
+安装完成之后，在任何目录中右键可以看到GIT GUI HOME与GIT BASH HERE。
+
+
+本地库、暂存区、工作区。
+本地库：历史版本（由git commit提交而来的代码）
+暂存区：临时存储（由git add添加而来的代码）
+工作区：当前代码（没有进行任何GIT命令的代码）
+
+
+远程库：代码托管中心
+在局域网环境下可以搭建：GTILAB服务器（私服）
+在外网环境下可以搭建GITHUB或者GITEE（码云）
+
+
+本地库与远程库：团队内协作与团队外协作。
+本地库通过push将本地库推到远程库，以便分享给其它开发人员。本地库可以使用pull命令来拉取被修改的远程库，以便更新本地库。
+
+远程库可以被fork来创建新的远程库。该其新远程库可以发起pull request请求旧的远程库对其合并。而旧的远程库创建者通过审核通过后进行merge来合并。
+
+其它人通过对远程库进行clone来构建自己的本地库。可以通过加入团队再进行push，也可以将本地库再推送到远程库。
+
+
+本地库操作：
+本地库初始化、基本操作、分支管理。
+
+本地库初始化
+（1）在任何目录下右键打开git bash here，然后用LINUX命令进行操作。
+可以使用mkdir创建目录，来作为本地库的使用目录，然后cd命令进入本地库目录。
+在本地库目录时使用git init命令来初始化本地库。然后使用ls -lA（查看.git隐藏目录）或ls -la（查看./ ../ 及.git隐藏目录）来查看目录变化。.git目录存放本地库相关的子目录和文件，不要随意手动进行删除和修改。
+（2）设置签名：
+填写用户名及邮件进行不同开发人员区分。注意它和远程库的账号密码没有任何关系。
+签名级别：
+项目级别/仓库级别签名：仅在当前本地库范围内有效。其优先级优先于系统用户级别签名。项目级别用户签名保存到当前本地库目录下的.git/config文件当中。
+git config user.name username
+git config user.email useremail
+系统用户级别签名：登陆当前操作系统的用户范围。系统级别用户签名保存到当前用户家目录下的.git/config文件当中。
+git config --global user.name username
+git config --global user.email useremail
+
+可以查看项目级别的签名信息:
+$ cat .git/config
+[core]
+        repositoryformatversion = 0
+        filemode = false
+        bare = false
+        logallrefupdates = true
+        symlinks = false
+        ignorecase = true
+[user]
+        name = sunwii
+        email = sunwii@qq.com
+
+
+可以查看系统级别的签名信息:
+$ cd ~
+$ pwd
+/c/Users/Administrator
+$ cat .gitconfig
+[user]
+        name = wuqun
+        email = wuqun@qq.com
+
+
+可以使用git status查看本地库状态(包括工作区、暂存区）：
+$ git status
+On branch master
+
+No commits yet
+
+nothing to commit (create/copy files and use "git add" to track)
+
+
+可以使用vim gitfile.txt创建新文件并编辑后保存，然后再查看下本地库状态：
+$ vim gitfile.txt
+
+$ git status
+On branch master
+
+No commits yet
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+
+        gitfile.txt
+
+使用git add gitfile.txt将未提交的文件加入暂存区。
+$ git add gitfile.txt
+warning: LF will be replaced by CRLF in gitfile.txt.
+The file will have its original line endings in your working directory.
+
+可以再交查看一下本地库状态：
+$ git status
+On branch master
+
+No commits yet
+
+Changes to be committed:
+  (use "git rm --cached <file>..." to unstage)
+
+        new file:   gitfile.txt
+
+可以使用git rm --cached gitfile.txt 将暂存区的内容移除文件：
+$ git rm --cached gitfile.txt
+rm 'gitfile.txt'
+
+或者可以使用git commit gitfile.txt 可以进入VIM编辑器添加流利然后保存，将暂存区的文件提交到本地库。
+
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+#
+# On branch master
+#
+# Initial commit
+#
+# Changes to be committed:
+#	new file:   gitfile.txt
+#
+可以输入:set nu 查看行号。然后进入第一行（之前的空白行）进行书写注释（注意写错有u或ctrl+r恢复）
+之后按ESC然后输入：wq保存退出：
+$ git commit gitfile.txt
+warning: LF will be replaced by CRLF in gitfile.txt.
+The file will have its original line endings in your working directory.
+hint: Waiting for your editor to close the file... 1436966 [sig] bash 11604! sigpacket::process: Suppressing signal 18 to win32 process (pid 15940)
+2057033 [sig] bash 11604! sigpacket::process: Suppressing signal 18 to win32 process (pid 15940)
+2461015 [sig] bash 11604! sigpacket::process: Suppressing signal 18 to win32 process (pid 15940)
+2806766 [sig] bash 11604! sigpacket::process: Suppressing signal 18 to win32 process (pid 15940)
+5050407 [sig] bash 11604! sigpacket::process: Suppressing signal 18 to win32 process (pid 15940)
+11427533 [sig] bash 11604! sigpacket::process: Suppressing signal 18 to win32 process (pid 15940)
+11556465 [sig] bash 11604! sigpacket::process: Suppressing signal 18 to win32 process (pid 15940)
+11818434 [sig] bash 11604! sigpacket::process: Suppressing signal 18 to win32 process (pid 15940)
+[master (root-commit) 18074cf] git file the first time edit!
+ 1 file changed, 2 insertions(+)
+ create mode 100644 gitfile.txt
+
+提交会形成版本号，提示文件被提交数量，提交注释，文件变化行数，提交的模式（文件新增）
+现在再看本地库状态：
+$ git status
+On branch master
+nothing to commit, working tree clean
+
+再次编辑gitfile.txt:
+$ vim gitfile.txt
+
+保存后再次看本地库状态：
+$ git status
+On branch master
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git checkout -- <file>..." to discard changes in working directory)
+
+        modified:   gitfile.txt
+
+no changes added to commit (use "git add" and/or "git commit -a")
+
+修改后可以git add再次添加再暂存区或者直接使用git commit进行提交（因为已经有关联）
+$ git add gitfile.txt
+warning: LF will be replaced by CRLF in gitfile.txt.
+The file will have its original line endings in your working directory.
+$ git status
+On branch master
+Changes to be committed:
+  (use "git reset HEAD <file>..." to unstage)
+
+        modified:   gitfile.txt
+可以使用git commin -m "注释“ 文件名 将文件注释后添加到本地库（不用再进入VIM编辑器）
+$ git commit -m "the second time edit!" gitfile.txt
+warning: LF will be replaced by CRLF in gitfile.txt.
+The file will have its original line endings in your working directory.
+[master 484be1a] the second time edit!
+ 1 file changed, 1 insertion(+)
+
+
+可以使用git log 查看版本历史记录:
+$ git log
+commit 484be1a04d86f81cb2f5f13914042b4a57dbab73 (HEAD -> master)
+Author: sunwii <sunwii@qq.com>
+Date:   Tue Aug 27 23:05:44 2019 +0800
+
+    the second time edit!
+
+commit 18074cf83368b67b3151ca059824bb3f467b8748
+Author: sunwii <sunwii@qq.com>
+Date:   Tue Aug 27 22:49:58 2019 +0800
+
+    git file the first time edit!
+
+历史记录包括：HASH值，作者，邮箱，提交日期，注释。
+解释：HEAD  -> master 表明当前分支master的当前版本（HEAD）
+如果记录很多，需要按空格进行分屏查看按b向上翻页，按q退出。
+
+
+如果要查看最近的n条记录，则可以添加参数：git log -n （其中n为数字）
+$ git log -2
+commit bcb8407a77f40b394c4d130e767129436e061486 (HEAD -> master)
+Merge: b7d1bbb 3d04dfc
+Author: sunwii <sunwii@qq.com>
+Date:   Wed Aug 28 01:08:40 2019 +0800
+
+    merge the file
+
+commit b7d1bbb7f8b02923f71a963185cf0d37853d9d7e
+Author: sunwii <sunwii@qq.com>
+Date:   Wed Aug 28 00:59:47 2019 +0800
+
+    bot—ot_fix update the line
+
+
+
+
+
+如果需要以简洁方式查看，可以直接输入：git log --pretty=oneline 以单行形式查看。
+$ git log --pretty=oneline
+70d9208bbd46927fd653d51908a42e9840019ce6 (HEAD -> master) the third time edit for history on git log
+484be1a04d86f81cb2f5f13914042b4a57dbab73 the second time edit!
+18074cf83368b67b3151ca059824bb3f467b8748 git file the first time edit!
+
+如果觉得HASH值显示太长，要简短点显示，则可以输入：git log --oneline ：
+$ git log --oneline
+70d9208 (HEAD -> master) the third time edit for history on git log
+484be1a the second time edit!
+18074cf git file the first time edit!
+
+如果需要查看版本移动时的步数，则可以输入：　git reflog  从引用形式查看：
+$ git reflog
+70d9208 (HEAD -> master) HEAD@{0}: commit: the third time edit for history on git log
+484be1a HEAD@{1}: commit: the second time edit!
+18074cf HEAD@{2}: commit (initial): git file the first time edit!
+
+HEAD指针指向当前历史记录（即HEAD -> master）。
+HEAD@{1}表明移动到当前版本需要的步数。
+要查看在线帮助，可以使用：git log --helpfile
+这时会定位到:file:///F:/Git_HOME/mingw64/share/doc/git-doc/git-log.html
+
+
+历史版本前进后退的操作方式：
+（1）基于索引值操作（可前可退）：git reset --hard 索引哈希值简短形式。
+比如：
+$ cat gitfile.txt
+git text create！
+git text line2!
+new line edit the sencode time!!
+new line2 for history!
+
+$ git reset --hard 18074cf
+HEAD is now at 18074cf git file the first time edit!
+$ cat gitfile.txt
+git text create！
+git text line2!
+$ git log --oneline
+18074cf (HEAD -> master) git file the first time edit!
+
+$ git reset --hard 484be1a
+HEAD is now at 484be1a the second time edit!
+$ cat gitfile.txt
+git text create！
+git text line2!
+new line edit the sencode time!!
+$ git log --oneline
+484be1a (HEAD -> master) the second time edit!
+18074cf git file the first time edit!
+
+$ git reset --hard 70d9208
+HEAD is now at 70d9208 the third time edit for history on git log
+$ cat gitfile.txt
+git text create！
+git text line2!
+new line edit the sencode time!!
+new line2 for history!
+$ git log --oneline
+70d9208 (HEAD -> master) the third time edit for history on git log
+484be1a the second time edit!
+18074cf git file the first time edit!
+
+
+（2）基于异常符号（只可后退）：使用git reset --hard HEAD^  退往以前的版本。如果返回当前的历史记录（通常配合--hard用于保持工作区正常），可以直接使用：git reset --hard HEAD
+$ git reset --hard HEAD^
+HEAD is now at 484be1a the second time edit!
+$ cat gitfile.txt
+git text create！
+git text line2!
+new line edit the sencode time!!
+
+如果需要后退2步，则使用两个^。
+$ git reset --hard 70d9208
+HEAD is now at 70d9208 the third time edit for history on git log
+$ git reset --hard HEAD^^
+HEAD is now at 18074cf git file the first time edit!
+
+如果后退很多次的话，需要很多^号，这时可以使用~符号加数字来简化，比如上边的可以简化为:
+$ git reset --hard 70d9208
+HEAD is now at 70d9208 the third time edit for history on git log
+$ git reset --hard HEAD~2
+HEAD is now at 18074cf git file the first time edit!
+
+进行历史版本操作的时候，有--hard、--soft、--mixed 参数。分别意义：
+--soft:  仅仅在本地库移动HEAD指针。由于本地库与暂存区不一致，会导致暂存区有modify提示，其原因不在于暂存区变化，而在于本地库变化。
+$ git reset --soft HEAD^
+$ git status
+On branch master
+Changes to be committed:
+  (use "git reset HEAD <file>..." to unstage)
+
+        modified:   gitfile.txt
+
+
+
+--mixed：在本地库移动HEAD指针，同时重置暂存区。会导致工作区有modify提示，其原因不在于工作区变化，而在于本地库和暂存区变化。默认不加参数的情况下为mixed。
+$ git reset --mixed HEAD~2
+Unstaged changes after reset:
+M       gitfile.txt
+
+$ git status
+On branch master
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git checkout -- <file>..." to discard changes in working directory)
+
+        modified:   gitfile.txt
+
+no changes added to commit (use "git add" and/or "git commit -a")
+
+
+--hard: 在本地库移动HEAD指针，同时重置暂存区以及工作区。比较常用。
+$ git reset --hard 70d9208
+HEAD is now at 70d9208 the third time edit for history on git log
+
+
+历史版本操作之删除文件找回：
+$ vim aaa.txt
+$ git add aaa.txt
+$ git commit -m "new file aaa.txt" aaa.txt
+
+$ rm -rf aaa.txt
+$ git status
+On branch master
+Changes not staged for commit:
+  (use "git add/rm <file>..." to update what will be committed)
+  (use "git checkout -- <file>..." to discard changes in working directory)
+
+        deleted:    aaa.txt
+
+no changes added to commit (use "git add" and/or "git commit -a")
+
+$ git add aaa.txt
+$ git status
+On branch master
+Changes to be committed:
+  (use "git reset HEAD <file>..." to unstage)
+
+        deleted:    aaa.txt
+		
+
+$ git commit -m "aaa.txt delete" aaa.txt
+[master 648b883] aaa.txt delete
+ 1 file changed, 1 deletion(-)
+ delete mode 100644 aaa.txt
+
+$ git status
+On branch master
+nothing to commit, working tree clean
+
+
+$ ls -l
+total 1
+-rw-r--r-- 1 Administrator 197121 95 8月  28 00:01 gitfile.txt
+
+$ git reflog
+648b883 (HEAD -> master) HEAD@{0}: commit: aaa.txt delete
+e094553 HEAD@{1}: commit: new file aaa.txt
+
+$ ls
+gitfile.txt
+$ git reset --hard HEAD^
+HEAD is now at e094553 new file aaa.txt
+$ ls
+aaa.txt  gitfile.txt
+
+如果只是删除了并没有进行提交，那直接使用：git reset --hard HEAD 直接重置为当前版本即可
+
+
+GIT比较文件差异
+修改后未添加到暂存区时(即暂存区还是旧版本）：
+$ git diff bbb.txt
+diff --git a/bbb.txt b/bbb.txt
+index f51b47d..ef5e5e9 100644
+--- a/bbb.txt
++++ b/bbb.txt
+@@ -1,6 +1,6 @@
+ bbb a new file!!!!
+ bbbbbbbbbbbbbbbbbbbb
+-ccccccccccccccccccc
++ccccccccccccccccccc333333
+ ddddddddddddddddd
+ eeeeeeeeeeeeeee
+ fffffffffffff
+
+修改后已添加到暂存区时：(无提示）
+$ git diff bbb.txt
+
+如果与本地库当前历史版本比较，可以使用：git diff HEAD bbb.txt
+$ git diff HEAD bbb.txt
+diff --git a/bbb.txt b/bbb.txt
+index f51b47d..ef5e5e9 100644
+--- a/bbb.txt
++++ b/bbb.txt
+@@ -1,6 +1,6 @@
+ bbb a new file!!!!
+ bbbbbbbbbbbbbbbbbbbb
+-ccccccccccccccccccc
++ccccccccccccccccccc333333
+ ddddddddddddddddd
+ eeeeeeeeeeeeeee
+ fffffffffffff
+ 
+如果要与本地库某个历史版本比较，可以使用git diff HEAD~2 bbb.txt
+$ git diff HEAD~2 bbb.txt
+diff --git a/bbb.txt b/bbb.txt
+new file mode 100644
+index 0000000..ef5e5e9
+--- /dev/null
++++ b/bbb.txt
+@@ -0,0 +1,7 @@
++bbb a new file!!!!
++bbbbbbbbbbbbbbbbbbbb
++ccccccccccccccccccc333333
++ddddddddddddddddd
++eeeeeeeeeeeeeee
++fffffffffffff
++gggggggggg
+
+如果不带文件名，则比较发生变化的各个文件版本：
+$ git diff
+diff --git a/bbb.txt b/bbb.txt
+index ef5e5e9..a5bcb38 100644
+--- a/bbb.txt
++++ b/bbb.txt
+@@ -2,6 +2,6 @@ bbb a new file!!!!
+ bbbbbbbbbbbbbbbbbbbb
+ ccccccccccccccccccc333333
+ ddddddddddddddddd
+-eeeeeeeeeeeeeee
++eeeeeeeeeeeeeee##############new########
+ fffffffffffff
+ gggggggggg
+
+
+
+GIT分支管理：
+分支：在版本控制中使用多条线同时推进多个任务。一个项目除了主分支master外，可能有其它分支同时开发，并且在发生BUG时可能会创建hot_fix分支进行修改操作然后合并回主分支。其它分支开发完成也可以合并回主分支，这时主分支可以进行版本升级。
+
+分支好处：同时并行推荐多个功能的开发，提高开发效率。各个分支独立推荐，如果一个分支失败不影响其它分支。
+
+
+分支管理。
+查看所有分支：
+$ git branch -v
+* master cc3b76b bbb.txt update again
+
+创建分支：
+$ git branch bot_fix
+$ git branch -v
+  bot_fix cc3b76b bbb.txt update again
+* master  cc3b76b bbb.txt update again
+
+切换分支：
+$ git checkout bot_fix
+Switched to branch 'bot_fix'
+$ git branch -v
+* bot_fix cc3b76b bbb.txt update again
+  master  cc3b76b bbb.txt update again
+
+合并分支：
+前提：分支本地库有变化：
+$ vim bbb.txt
+$ git add bbb.txt
+$ git commit -m "bbb.txt update in new branch!" bbb.txt
+
+$ git branch -v
+* bot_fix f26100c bbb.txt update in new branch!
+  master  cc3b76b bbb.txt update again
+
+$ git reflog
+f26100c (HEAD -> bot_fix) HEAD@{0}: commit: bbb.txt update in new branch!
+cc3b76b (master) HEAD@{1}: checkout: moving from master to bot_fix
+cc3b76b (master) HEAD@{2}: commit: bbb.txt update again
+c133602 HEAD@{3}: commit: bbb.txt update
+539ef48 HEAD@{4}: reset: moving to HEAD
+539ef48 HEAD@{5}: commit: new file bbb.txt
+
+第一步：切换到接受修改的分支（被合并的分支）上。git checkout 【被合并分支】
+
+第二步：执行merge命令：git merge 【有新变化的分支】
+
+第三步：解决合并时产生的冲突。修改至满意为止，然后进行git add【文件名】
+
+第四步：采用git commit -m "注释信息"  （注意不带文件名）
+git checkout master
+vim bbb.txt
+$ cat bbb.txt
+bbb a new file!!!!
+bbbbbbbbbbbbbbbbbbbb
+ccccccccccccccccccc333333
+dddddddddddddddddcat MASTER update!
+eeeeeeeeeeeeeee##############new########
+fffffffffffff
+gggggggggg
+
+git commit -m " master update bbb.txt last" bbb.txt
+
+$ git checkout bot_fix
+Switched to branch 'bot_fix'
+$ vim bbb.txt
+$ cat bbb.txt
+bbb a new file!!!!
+bbbbbbbbbbbbbbbbbbbb
+ccccccccccccccccccc333333
+ddddddddddddddddd
+eeeeeeeeeeeeeee##############new########
+fffffffffffffFFFFFFFFF---BOT_FIX update!
+
+gggggggggg
+
+$ git commit -m "bot_fix branch update bbb.txt last" bbb.txt
+
+
+$ git branch -v
+* bot_fix 7e5fac7 bot_fix branch update bbb.txt last
+  master  c179ee1 master update bbb.txt last
+
+合并成功时:
+$ git merge master
+Auto-merging bbb.txt
+Merge made by the 'recursive' strategy.
+ bbb.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+$ git branch -v
+* bot_fix 83c8198 Merge branch 'master' into bot_fix
+  master  c179ee1 master update bbb.txt last
+  
+合并冲突时:
+$ git merge master
+Auto-merging bbb.txt
+CONFLICT (content): Merge conflict in bbb.txt
+Automatic merge failed; fix conflicts and then commit the result.
+
+$ cat bbb.txt
+bbb a new file!!!!
+bbbbbbbbbbbbbbbbbbbb
+ccccccccccccccccccc333333
+dddddddddddddddddMASTER update!
+eeeeeeeeeeeeeee##############new########
+fffffffffffffFFFFFFFFF---BOT_FIX update! 2
+<<<<<<< HEAD
+bot_fix update here
+=======
+master update here
+>>>>>>> master
+gggggggggg
+
+说明：不同分支内容不一致时，以多个双横线（等于号）进行分隔，形式如上。解决的手段是删除特殊符号，修改内容：
+$ cat bbb.txt
+bbb a new file!!!!
+bbbbbbbbbbbbbbbbbbbb
+ccccccccccccccccccc333333
+dddddddddddddddddMASTER update!
+eeeeeeeeeeeeeee##############new########
+fffffffffffffFFFFFFFFF---BOT_FIX update! 2
+bot_fix update here
+master update here
+gggggggggg
+
+$ git status
+On branch bot_fix
+You have unmerged paths.
+  (fix conflicts and run "git commit")
+  (use "git merge --abort" to abort the merge)
+
+Unmerged paths:
+  (use "git add <file>..." to mark resolution)
+
+        both modified:   bbb.txt
+
+no changes added to commit (use "git add" and/or "git commit -a")
+
+$ git commit -m "merge the file" bbb.txt
+fatal: cannot do a partial commit during a merge.
+
+$ git commit -m "merge the file"
+error: Committing is not possible because you have unmerged files.
+hint: Fix them up in the work tree, and then use 'git add/rm <file>'
+hint: as appropriate to mark resolution and make a commit.
+fatal: Exiting because of an unresolved conflict.
+U       bbb.txt
+
+$ git add bbb.txt
+$ git status
+On branch bot_fix
+All conflicts fixed but you are still merging.
+  (use "git commit" to conclude merge)
+
+Changes to be committed:
+
+        modified:   bbb.txt
+
+$ git commit -m "merge the file"
+[bot_fix bcb8407] merge the file
+
+删除分支：
+第一步：退出当前分支（即切换到不删除的分支上)
+git checkout master
+第二步：执行git branch -d 【要删除的分支名】操作。如果删除不了，则强制删除（将-d换成-D）
+$ git branch -d bot_fix
+Deleted branch bot_fix (was bcb8407).
+$ git branch -v
+* master bcb8407 merge the file
+
+
+HASH算法: GIT底层采用SHA1算法。对于提交，只是新建一个指针。对于历史版本，只是改变HEAD指针指向。对于新建分支，只是新建一个指针指向当前历史版本。切换分支只是改变HEAD指针指向。
+MD5：32位十六进制数（或16位）
+SHA1：40位十六进制数
+CRC32:8位十六进制数。
+
+输出长度固定，不同输入对应不同输出，不可逆。
+
+
+
